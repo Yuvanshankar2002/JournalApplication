@@ -3,13 +3,12 @@ package net.engineeringdigest.journalApp.Controller;
 
 import net.engineeringdigest.journalApp.entity.JournalEntry;
 import net.engineeringdigest.journalApp.service.JournalApplicationService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @RestController
 @RequestMapping("/journal")
@@ -26,23 +25,27 @@ public class JournalEntryController {
 
     @PostMapping
     public boolean createEntry(@RequestBody JournalEntry myEntry){
+        myEntry.setDate(LocalDateTime.now());
         journalApplication.saveEntry(myEntry);
 
         return true;
     }
 
     @GetMapping("id/{myId}")
-    public JournalEntry getJournalEntryById(@PathVariable Long myId){
-        return null;
+    public Optional<JournalEntry> getJournalEntryById(@PathVariable ObjectId myId){
+
+        return journalApplication.findbyId(myId);
     }
 
     @DeleteMapping("id/{myId}")
-    public JournalEntry deletemyJournalEntryById(@PathVariable Long myId){
+    public boolean deletemyJournalEntryById(@PathVariable ObjectId myId){
 
-    return null;
+
+    return journalApplication.deletebyId(myId);
     }
     @PutMapping("id/{id}")
     public JournalEntry updateJournalById(@PathVariable Long id,@RequestBody JournalEntry myEntry){
+        myEntry.setDate(LocalDateTime.now());
         return null;
     }
 
