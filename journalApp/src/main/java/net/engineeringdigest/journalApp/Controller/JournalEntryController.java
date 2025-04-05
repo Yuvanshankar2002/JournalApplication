@@ -1,6 +1,7 @@
 package net.engineeringdigest.journalApp.Controller;
 
 
+import net.engineeringdigest.journalApp.JournalApplication;
 import net.engineeringdigest.journalApp.entity.JournalEntry;
 import net.engineeringdigest.journalApp.service.JournalApplicationService;
 import org.bson.types.ObjectId;
@@ -44,9 +45,17 @@ public class JournalEntryController {
     return journalApplication.deletebyId(myId);
     }
     @PutMapping("id/{id}")
-    public JournalEntry updateJournalById(@PathVariable Long id,@RequestBody JournalEntry myEntry){
-        myEntry.setDate(LocalDateTime.now());
-        return null;
+    public JournalEntry updateJournalById(@PathVariable ObjectId id,@RequestBody JournalEntry myEntry){
+        JournalEntry old = journalApplication.findbyId(id).orElse(null);
+        if(old!=null){
+            old.setTitle(myEntry.getTitle()!= null && !myEntry.getTitle().equals("")? myEntry.getTitle(): old.getTitle());
+            old.setContent(myEntry.getContent()!=null && !myEntry.getContent().equals("")? myEntry.getContent() : old.getContent());
+
+
+        }
+        journalApplication.saveEntry(old);
+
+        return old;
     }
 
 }
