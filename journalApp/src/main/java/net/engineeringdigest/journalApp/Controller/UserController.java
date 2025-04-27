@@ -9,6 +9,8 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -32,29 +34,29 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody  User myUser){
-        try{
-            userService.saveEntry(myUser);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        }
-        catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        }
-    }
-
-    @PutMapping("/{username}")
-    ResponseEntity<?> updateUser(@RequestBody User myUser,@PathVariable String username){
+    @PutMapping
+    ResponseEntity<?> updateUser(@RequestBody User myUser){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+         String username = authentication.getName();
         User userInDb = userService.findByUserName(username);
         if(userInDb != null){
             userInDb.setUserName(myUser.getUserName());
             userInDb.setPassword(myUser.getPassword());
-            userService.saveEntry(userInDb);
+            userService.saveNewEntry(userInDb);
             return new ResponseEntity<>(userInDb,HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @DeleteMapping
+    ResponseEntity<?> deletebyuserId(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        userService.deleteByUsername(authentication.getName());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 
 
 

@@ -21,11 +21,15 @@ public class UserService {
     private UserRepository userRepo;
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public void saveEntry(User Entry){
+    public void saveNewEntry(User Entry){
         Entry.setPassword(passwordEncoder.encode(Entry.getPassword()));
         Entry.setRoles(Arrays.asList("USER"));
         userRepo.save(Entry);
     }
+    public void saveUser(User user){
+        userRepo.save(user);
+    }
+
 
     public List<User> getall(){
         return userRepo.findAll();
@@ -43,6 +47,11 @@ public class UserService {
         return userRepo.findByUserName(username);
 
     }
+
+    public void deleteByUsername(String userName){
+        userRepo.deleteByUserName(userName);
+    }
+
 
 }
 
