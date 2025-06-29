@@ -1,9 +1,12 @@
 package net.engineeringdigest.journalApp.service;
 
+import lombok.extern.slf4j.Slf4j;
 import net.engineeringdigest.journalApp.entity.JournalEntry;
 import net.engineeringdigest.journalApp.entity.User;
 import net.engineeringdigest.journalApp.repository.JournalEntryRepository;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -13,13 +16,18 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 @Component
+@Slf4j
 public class JournalApplicationService {
 
     @Autowired
     private JournalEntryRepository JournalEntryRepo;
 
+//    private static final Logger logger = LoggerFactory.getLogger(JournalApplicationService.class);
+
+
     @Autowired
     private UserService userService;
+
 
     @Transactional
     public void saveEntry(JournalEntry Entry, String userName){
@@ -28,10 +36,10 @@ public class JournalApplicationService {
         JournalEntry saved = JournalEntryRepo.save(Entry);
         user.getJournalEntries().add(saved);
         userService.saveUser(user);
+        log.info("hahahaha");
 
         }
         catch (Exception e){
-            System.out.println(e);
             throw new RuntimeException("An Error occured while saving..",e);
         }
 
@@ -59,6 +67,7 @@ public class JournalApplicationService {
 
                 userService.saveUser(user);
                 JournalEntryRepo.deleteById(myid);
+                log.info("Removed Journal Entries...");
             }
         }
         catch (Exception e){

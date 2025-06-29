@@ -47,6 +47,7 @@ public class JournalEntryController {
         String userName = authentication.getName();
         try{
         myEntry.setDate(LocalDateTime.now());
+
         journalApplication.saveEntry(myEntry,userName);
         return new ResponseEntity<>(HttpStatus.CREATED);
 
